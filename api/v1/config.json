@@ -1,0 +1,8 @@
+{
+  "entry": "index.html",
+  "mode": "button",
+  "target": "#synapse",
+  "label": "Play",
+  "position": "bottom-right",
+  "height": "600px"
+}

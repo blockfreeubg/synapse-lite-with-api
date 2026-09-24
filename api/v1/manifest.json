@@ -1,0 +1,16 @@
+{
+  "name": "Synapse",
+  "apiVersion": "1",
+  "sdk": "api/v1/synapse.js",
+  "config": "api/v1/config.json",
+  "docs": "docs/index.html",
+  "endpoints": {
+    "launcher": "index.html",
+    "player": "play-260430.html"
+  },
+  "assets": {
+    "logo": "assets/logo.png",
+    "favicon": "run-site/images/favicon.png"
+  },
+  "modes": ["button", "inline", "manual"]
+}

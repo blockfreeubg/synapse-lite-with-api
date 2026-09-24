@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Synapse Static API - Docs</title>
+<style>
+  body{margin:0;background:#0d0d10;color:#e8e8ee;font:16px/1.6 system-ui,sans-serif}
+  main{max-width:820px;margin:0 auto;padding:32px 20px 80px}
+  h1{color:#ff8700;margin-bottom:0} h2{margin-top:40px;border-bottom:1px solid #2a2a33;padding-bottom:6px}
+  p.sub{color:#9a9aa8;margin-top:4px}
+  pre{background:#16161c;border:1px solid #2a2a33;border-radius:8px;padding:14px;overflow:auto;font-size:14px}
+  code{font-family:ui-monospace,Consolas,monospace;color:#ffb257}
+  pre code{color:#e8e8ee}
+  table{border-collapse:collapse;width:100%;font-size:14px}
+  th,td{border:1px solid #2a2a33;padding:8px;text-align:left;vertical-align:top}
+  th{background:#16161c}
+  .note{background:#1c1710;border-left:3px solid #ff8700;padding:10px 14px;border-radius:4px}
+</style>
+</head>
+<body>
+<main>
+<h1>Synapse Static API</h1>
+<p class="sub">Add Synapse to any site with one snippet. No server, no build step.</p>
+
+<h2>Quick start</h2>
+<p>Paste this before <code>&lt;/body&gt;</code> on any page. It adds a floating <b>Play</b> button that opens Synapse fullscreen.</p>
+<pre><code class="snip">&lt;script src="{{BASE}}/api/v1/synapse.js"&gt;&lt;/script&gt;</code></pre>
+
+<h2>Embed inline instead</h2>
+<p>Put a container where you want it, then load the script in inline mode:</p>
+<pre><code class="snip">&lt;div id="synapse" style="height:600px"&gt;&lt;/div&gt;
+&lt;script src="{{BASE}}/api/v1/synapse.js" data-mode="inline"&gt;&lt;/script&gt;</code></pre>
+
+<h2>Script options (data attributes)</h2>
+<table>
+<tr><th>Attribute</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>data-mode</code></td><td><code>button</code></td><td><code>button</code> floating button + fullscreen overlay, <code>inline</code> iframe in a container, <code>manual</code> nothing until you call the JS API.</td></tr>
+<tr><td><code>data-target</code></td><td><code>#synapse</code></td><td>CSS selector of the container (inline mode).</td></tr>
+<tr><td><code>data-label</code></td><td><code>Play</code></td><td>Button text.</td></tr>
+<tr><td><code>data-position</code></td><td><code>bottom-right</code></td><td><code>bottom-right</code> or <code>bottom-left</code>.</td></tr>
+<tr><td><code>data-height</code></td><td><code>600px</code></td><td>Height used if the inline container has none.</td></tr>
+<tr><td><code>data-guest</code></td><td><code>true</code></td><td>Visitors who aren't signed in are logged in automatically as a shared guest account. Set <code>false</code> to show the normal Sign In button instead.</td></tr>
+<tr><td><code>data-base</code></td><td>auto</td><td>Where Synapse is hosted. Auto-detected from the script URL; only set it if you self-host the script separately.</td></tr>
+</table>
+
+<h2>JavaScript API</h2>
+<table>
+<tr><th>Call</th><th>Description</th></tr>
+<tr><td><code>Synapse.open()</code></td><td>Open the fullscreen overlay (Esc or the &times; closes it).</td></tr>
+<tr><td><code>Synapse.close()</code></td><td>Close the overlay.</td></tr>
+<tr><td><code>Synapse.mount(target)</code></td><td>Mount an inline iframe into a selector or element. Returns the iframe.</td></tr>
+<tr><td><code>Synapse.destroy()</code></td><td>Remove the button, overlay and mounted iframes.</td></tr>
+<tr><td><code>Synapse.config({...})</code></td><td>Change options at runtime (call before <code>open</code>/<code>mount</code>).</td></tr>
+<tr><td><code>Synapse.url()</code></td><td>Returns the launcher URL.</td></tr>
+<tr><td><code>Synapse.on(event, fn)</code> / <code>off</code></td><td>Events: <code>open</code>, <code>close</code>, <code>ready</code> (iframe loaded).</td></tr>
+</table>
+<pre><code class="snip">&lt;script src="{{BASE}}/api/v1/synapse.js" data-mode="manual"&gt;&lt;/script&gt;
+&lt;button onclick="Synapse.open()"&gt;Launch&lt;/button&gt;</code></pre>
+
+<h2>Static endpoints</h2>
+<p>Plain JSON files, served as-is by any static host.</p>
+<table>
+<tr><th>Path</th><th>Contents</th></tr>
+<tr><td><code>/api/v1/manifest.json</code></td><td>Name, version, entry pages and asset paths.</td></tr>
+<tr><td><code>/api/v1/config.json</code></td><td>Default SDK options.</td></tr>
+<tr><td><code>/api/v1/synapse.js</code></td><td>The embed SDK.</td></tr>
+</table>
+
+<h2>Hosting</h2>
+<p>Upload the whole folder to any static host (GitHub Pages, Netlify, Cloudflare Pages, or any web server). The <code>{{BASE}}</code> in the snippets above fills in automatically from wherever this page is served, so they are copy-ready.</p>
+
+<h2>Notes</h2>
+<div class="note">
+The launcher signs in through CloudMoon's own backend, so players need a CloudMoon account and the site must be served over HTTPS for streaming (fullscreen, audio, gamepad) to work. The SDK only embeds the launcher; it does not change how that backend works.
+</div>
+</main>
+<script>
+  var base = new URL("../", location.href).href.replace(/\/+$/, "");
+  document.querySelectorAll(".snip").forEach(function (el) {
+    el.textContent = el.textContent.split("{{BASE}}").join(base);
+  });
+  document.querySelectorAll("code, td").forEach(function (el) {
+    if (!el.classList.contains("snip") && el.children.length === 0 && el.textContent.indexOf("{{BASE}}") > -1)
+      el.textContent = el.textContent.split("{{BASE}}").join(base);
+  });
+</script>
+</body>
+</html>
